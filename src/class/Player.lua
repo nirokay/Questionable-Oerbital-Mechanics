@@ -17,13 +17,6 @@ function Player:init(tempX, tempY)
 	self.throttle = 0.5
 	self.speed = 0.05
 
-	-- Time Warping:
-	self.warpspeed = 1
-	self.warpLimit = 10
-	-- Cooldown Between Clicking:
-	self.warpCoolDown = 30
-	self.coolDown = 0
-
 	-- Landings:
 	self.impacttolerance = 0.5
 	self.landingspeed = 0
@@ -140,37 +133,6 @@ function Player:gravity()
 	end
 end
 
-function Player:timewarp()
-	local step = 1
-	-- Time Warp Limits:
-	local min = 1
-	local max = self.warpLimit
-
-	-- Decrease Warp
-	if love.keyboard.isDown(controls.flight.warp.down) and self.coolDown <= 0 then
-		self.warpspeed = self.warpspeed - step
-		self.coolDown = self.warpCoolDown
-	end
-	-- Increase Warp
-	if love.keyboard.isDown(controls.flight.warp.up) and self.coolDown <= 0 then
-		self.warpspeed = self.warpspeed + step
-		self.coolDown = self.warpCoolDown
-	end
-	-- Reset Warp
-	if love.keyboard.isDown(controls.flight.warp.reset) then
-		self.warpspeed = min
-	end
-
-	-- Value Correction
-	if self.warpspeed < min then
-		self.warpspeed = min
-	elseif self.warpspeed > max then 
-		self.warpspeed = max
-	end
-
-	return self.warpspeed
-end
-
 function Player:updatePosition()
 	self.x = self.x + self.xSpeed
 	self.y = self.y + self.ySpeed
@@ -182,15 +144,9 @@ end
 
 function Player:update(dt)
 	--debug(self.warpspeed)
-	self:timewarp()
-	for i=1, self.warpspeed do
-		self:gravity()
-		self:flightControls()
-		self:updatePosition()
-	end
-	self:throttleControls()
-	
-	self.coolDown = self.coolDown - 1
+	self:gravity()
+	self:flightControls()
+	self:updatePosition()
 end
 
 function Player:draw()
