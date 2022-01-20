@@ -8,9 +8,13 @@ function love.load()
 	love.window.setTitle(info.name.." - v"..info.version)
 	width, height = love.graphics.getDimensions()
 	cam = Camera()
-	zoomlevel = 1
+	zoomlevel = 0.005
+
+
 
 	-- Loading:
+	ships = {}				--Potentially add other starships in the future?
+
 	planet = {}
 	loadPlanets()
 
@@ -33,7 +37,8 @@ function loadPlanets()
 				p.x, p.y,
 				p.r, p.m,
 				p.name,
-				p.colour
+				p.colour,
+				p.parent
 			)
 		)
 		debug(p.name.." is loaded")
@@ -42,14 +47,13 @@ function loadPlanets()
 end
 
 function updatePlanets()
-	for i=1, #planet do
-		planet[i]:update()
-	end
+	planet[1]:update()
 end
 
 function drawPlanets()
 	for i=1, #planet do
 		planet[i]:draw()
+		--debug("Drawing planet " .. i)
 	end
 end
 
@@ -106,6 +110,7 @@ function love.update(dt)
 	-- Camera:
 	cam:lookAt(player.x, player.y)
 	cameraControls()
+	--debug(player.x .. " " .. player.y)
 end
 
 function love.draw()

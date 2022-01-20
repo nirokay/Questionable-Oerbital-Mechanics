@@ -29,7 +29,7 @@ function Player:init(tempX, tempY)
 	self.landingspeed = 0
 
 	-- Mass:
-	self.m = 1
+	self.m = 10
 end
 
 
@@ -137,17 +137,6 @@ function Player:gravity()
 	if self:isLanded() then
 		-- Player is landed:
 		self.xSpeed, self.ySpeed = 0, 0
-	else
-		-- Player is not landed:
-		for i=1, #planet do
-			local pla = planet[i]
-			local grav = calc.gPull(self, pla)
-			local dist = calc.distance(self.x, self.y, pla.x, pla.y)
-			local pull = 20/dist * grav 
-
-			self.xSpeed = self.xSpeed + (pla.x - self.x)*pull
-			self.ySpeed = self.ySpeed + (pla.y - self.y)*pull
-		end
 	end
 end
 
