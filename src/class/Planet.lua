@@ -9,6 +9,10 @@ function Planet:init(tempX, tempY, tempR, tempM, tempXSpeed, tempYSpeed, tempNam
 	self.xSpeed = 0
 	self.ySpeed = 0
 
+	-- Orbital speed:
+	self.orbitalX = 0
+	self.orbitalY = 0
+
 	-- Speed Change: (throttle 0 - 1; variable) (speed; constant (max speed change))
 	self.throttle = 0.5
 	self.speed = 0.05
@@ -39,8 +43,8 @@ end
 -- FUNCTIONS
 
 function Planet:updatePosition()
-	self.x = self.x + self.xSpeed
-	self.y = self.y + self.ySpeed
+	self.x = self.x + self.xSpeed + self.orbitalX
+	self.y = self.y + self.ySpeed + self.orbitalY
 	debug("Updating position of planet " .. self.name .. ": " .. self.x .. " " .. self.y)
 end
 
@@ -49,10 +53,16 @@ function Planet:attract(dt)		--Planet doing the attracting, divided in two parts
 	for i, child in ipairs(self.children) do 
 		local grav = calc.gPull(self, child)
 		local dist = calc.distance(self.x, self.y, child.x, child.y)
-		local pull = 20/dist * grav
-	
-		child.xSpeed = child.xSpeed - (child.x - self.x)*pull
-		child.ySpeed = child.ySpeed - (child.y - self.y)*pull
+
+		-- Reworked planetary gravity, now works with multiple layers of parent-children. Also more realistc?? 
+		local angle = math.atan((child.y-self.y)/(child.x-self.x))
+		if self.x < child.x then 
+			angle = angle - 3.14159
+		end
+		child.orbitalX = self.xSpeed + self.orbitalX
+		child.orbitalY = self.ySpeed + self.orbitalY
+		child.xSpeed = child.xSpeed + grav/child.m*math.cos(angle)*1e9
+		child.ySpeed = child.ySpeed + grav/child.m*math.sin(angle)*1e9
 	end 
 
 	--Attracting the player

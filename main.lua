@@ -23,7 +23,7 @@ function love.load()
 	loadPlanets()
 
 	local spawnPlanet = planet[1]
-	player = Player(spawnPlanet.x, spawnPlanet.y-spawnPlanet.r-1)
+	player = Player(spawnPlanet.x, spawnPlanet.y-spawnPlanet.r-1, "orbiter")
 	gui = Gui(1)
 	effects = {}
 end
