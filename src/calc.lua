@@ -3,7 +3,7 @@ calc = {}
 
 -- G-Constant
 calc.G = 6.67e-11 -- TWEAKABLE FOR LATER DEPENDING ON SCALE!!!!!!!!!!!
-
+calc.pi = 3.14
 -- Development debugging/logging thing
 function calc.debug(text)
 	if calc.isDebug then
