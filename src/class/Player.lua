@@ -26,6 +26,9 @@ function Player:init(tempX, tempY)
 
 	-- Rotation:
 	self.angle = calc.pi/2
+
+	-- Status:
+	self.exploding = false
 end
 
 
@@ -153,11 +156,11 @@ end
 
 function Player:hasCrashed() --Testing function, see if a player is inside a planet
 	--debug(self.landingspeed)
-	if self.landingspeed > self.impacttolerance then 
+	if self.landingspeed > self.impacttolerance and not self.exploding then 
 			-- Add explosion effect?
-		table.insert(effects, FX("flash", self.x, self.y))
-		self:reset()
-		self.landingspeed = 0
+		table.insert(effects, FX("flash", self.x, self.y, self))
+		self.exploding = true
+		return
 	end 
 end
 
@@ -196,15 +199,17 @@ end
 
 function Player:update(dt)
 	--debug(self.warpspeed)
-  
+	
 	if self.angle > calc.pi*2 then 
 		self.angle = 0
 	elseif self.angle < 0 then 
 		self.angle = calc.pi*2
 	end
-	self:gravity()
-	self:flightControls()
-	self:updatePosition()
+	if not self.exploding then 
+		self:gravity()
+		self:flightControls()
+		self:updatePosition()
+	end 
 end
 
 function Player:draw()
@@ -221,12 +226,14 @@ function Player:draw()
 		-- Right Bottom
 		x+dist, y+dist
 	}
-	love.graphics.setColor(0.5, 0.5, 0.7)
-	love.graphics.polygon("fill", vertices)
+	if not self.exploding then 
+		love.graphics.setColor(0.5, 0.5, 0.7)
+		love.graphics.polygon("fill", vertices)
 
-	love.graphics.setColor(1, 0, 0)
-	love.graphics.circle("fill", x, y, 5, 20)
+		love.graphics.setColor(1, 0, 0)
+		love.graphics.circle("fill", x, y, 5, 20)
 
-	-- Directional Circle (temporary until actual rotatable ship texture is made)
-	love.graphics.circle("fill", x+dist*(1/zoomlevel*2)*math.cos(self.angle), y-dist*(1/zoomlevel*2)*math.sin(self.angle), 1/zoomlevel*2)
+		-- Directional Circle (temporary until actual rotatable ship texture is made)
+		love.graphics.circle("fill", x+dist*(1/zoomlevel*2)*math.cos(self.angle), y-dist*(1/zoomlevel*2)*math.sin(self.angle), 1/zoomlevel*2)
+	end 
 end
