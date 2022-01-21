@@ -8,7 +8,7 @@ function love.load()
 	love.window.setTitle(info.name.." - v"..info.version)
 	width, height = love.graphics.getDimensions()
 	cam = Camera()
-	zoomlevel = 0.005
+	zoomlevel = 0.5
 
 
 

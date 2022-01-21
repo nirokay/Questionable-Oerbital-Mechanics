@@ -30,6 +30,9 @@ function Player:init(tempX, tempY)
 
 	-- Mass:
 	self.m = 10
+
+	-- Rotation:
+	self.angle = calc.pi/2
 end
 
 
@@ -97,6 +100,21 @@ function Player:flightControls()
 		self.xSpeed = self.xSpeed + speedChange
 		debug("Player control: right")
 	end
+
+
+	-- Main Engine controls:
+	if love.keyboard.isDown(controls.flight.thrust.engine) then 
+		self.xSpeed = self.xSpeed + math.cos(self.angle) * speedChange 
+		debug("Ship thrusters X: " .. math.cos(self.angle) .. " " .. math.sin(self.angle) .. " " .. self.angle)
+		self.ySpeed = self.ySpeed - math.sin(self.angle) * speedChange
+	end
+	if love.keyboard.isDown(controls.flight.thrust.rotleft) then 
+		self.angle = self.angle + 1/love.timer.getFPS()
+	end
+	if love.keyboard.isDown(controls.flight.thrust.rotright) then 
+		self.angle = self.angle - 1/love.timer.getFPS()
+	end
+
 
 	-- Reset:
 	if love.keyboard.isDown(controls.flight.reset) then
@@ -189,7 +207,11 @@ function Player:update(dt)
 		self:updatePosition()
 	end
 	self:throttleControls()
-	
+	if self.angle > calc.pi*2 then 
+		self.angle = 0
+	elseif self.angle < 0 then 
+		self.angle = calc.pi*2
+	end
 	self.coolDown = self.coolDown - 1
 end
 
@@ -207,10 +229,12 @@ function Player:draw()
 		-- Right Bottom
 		x+dist, y+dist
 	}
-
 	love.graphics.setColor(0.5, 0.5, 0.7)
 	love.graphics.polygon("fill", vertices)
 
 	love.graphics.setColor(1, 0, 0)
 	love.graphics.circle("fill", x, y, 5, 20)
+
+	-- Directional Circle (temporary until actual rotatable ship texture is made)
+	love.graphics.circle("fill", x+dist*math.cos(self.angle), y-dist*math.sin(self.angle), 3, 20)
 end

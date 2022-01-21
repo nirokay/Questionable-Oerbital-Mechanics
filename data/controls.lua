@@ -18,7 +18,10 @@ controls = {
 			up =     "w",
 			down =   "s",
 			left =   "a",
-			right =  "d"
+			right =  "d",
+			engine = "space",
+			rotleft = "q",
+			rotright = "e"
 		},
 
 		-- Time Warp Controls:
