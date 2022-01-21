@@ -2,7 +2,7 @@ settings = {
 	zoom = {
 		min = 0.0001,
 		max = 4,
-		step = 0.01,
+		step = 0.05,
 		reset = 0.0001
 	},
 	warp = {

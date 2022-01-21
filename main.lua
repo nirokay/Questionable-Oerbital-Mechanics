@@ -25,6 +25,7 @@ function love.load()
 	local spawnPlanet = planet[1]
 	player = Player(spawnPlanet.x, spawnPlanet.y-spawnPlanet.r-1)
 	gui = Gui(1)
+	effects = {}
 end
 
 
@@ -62,7 +63,16 @@ function drawPlanets()
 	end
 end
 
-
+function drawEffects()
+	for i=1, #effects do 
+		effects[i]:draw()
+	end
+	for i, effect in ipairs(effects) do    			--Separate functions because if I remove something while processing it it WILL lead to an error
+		if effect.finished then 
+			table.remove(effects, i)
+		end
+	end 
+end
 
 
 -- Camera
@@ -75,10 +85,10 @@ function cameraControls()
 	function love.wheelmoved(x, y)
 		if y > 0 then
 			-- Zoom in:
-			zoomlevel = zoomlevel + step
+			zoomlevel = zoomlevel + step*(zoomlevel*10)
 		elseif y < 0 then
 			-- Zoom out:
-			zoomlevel = zoomlevel - step
+			zoomlevel = zoomlevel - step*(zoomlevel*10)
 		end
 	end
 
@@ -162,6 +172,7 @@ function love.draw()
 	cam:attach()
 		-- Game Objects:
 		drawPlanets()
+		drawEffects()
 		player:draw()
 
 		-- Camera Zoom Player Location Indicator:                              OVERWORK SOON PLS KAY; IT UGLY
