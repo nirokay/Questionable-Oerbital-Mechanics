@@ -13,10 +13,13 @@ texture = require "textures/textures"
 calc = require "src/calc"
 font = require "src/font"
 
+
+
 -- Game Classes:
 require "src/class/Player"
 require "src/class/Gui"
 require "src/class/Planet"
+require "src/class/FX"
 
 -- Game Data:
 planetdata = require "data/planetdata"

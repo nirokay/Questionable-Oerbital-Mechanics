@@ -36,5 +36,20 @@ function calc.gPull(obj1, obj2)
 	return grav
 end
 
+-- Calculate closest space object to target:
+function calc.closestObj(target)
+	local minDist = calc.distance(planet[1].x, planet[1].y, target.x, target.y)-planet[1].r
+	local minPlanet = planet[1]
+	for i, pla in ipairs(planet) do 
+		if calc.distance(pla.x, pla.y, target.x, target.y)-pla.r < minDist then 
+			minDist = calc.distance(pla.x, pla.y, target.x, target.y)-pla.r
+			minPlanet = pla
+		end 
+	end
+
+	return minPlanet 
+
+end
+
 
 return calc
