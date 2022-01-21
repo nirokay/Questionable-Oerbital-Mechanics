@@ -194,5 +194,5 @@ function Player:draw()
 	love.graphics.circle("fill", x, y, 5, 20)
 
 	-- Directional Circle (temporary until actual rotatable ship texture is made)
-	love.graphics.circle("fill", x+dist*math.cos(self.angle), y-dist*math.sin(self.angle), 3, 20)
+	love.graphics.circle("fill", x+dist*(1/zoomlevel*2)*math.cos(self.angle), y-dist*(1/zoomlevel*2)*math.sin(self.angle), 1/zoomlevel*2)
 end
