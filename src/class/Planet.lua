@@ -1,6 +1,6 @@
 Planet = Class {}
 
-function Planet:init(tempX, tempY, tempR, tempM, tempName, tempC, tempP)
+function Planet:init(tempX, tempY, tempR, tempM, tempXSpeed, tempYSpeed, tempName, tempC, tempP)
 	-- Planet Position:
 	self.x = tempX
 	self.y = tempY
@@ -23,8 +23,9 @@ function Planet:init(tempX, tempY, tempR, tempM, tempName, tempC, tempP)
 
 	-- Planet Family: 
 	self.children = {}
-	if (tempP ~= "star") then  
-		self.ySpeed = 5
+	if (tempP ~= "star") then
+		self.xSpeed = tempXSpeed
+		self.ySpeed = tempYSpeed
 		self.parent = planet[tempP]
 		table.insert(planet[tempP].children, self)
 	end 
@@ -48,7 +49,7 @@ function Planet:attract(dt)		--Planet doing the attracting, divided in two parts
 	for i, child in ipairs(self.children) do 
 		local grav = calc.gPull(self, child)
 		local dist = calc.distance(self.x, self.y, child.x, child.y)
-		local pull = 20/dist * grav/1e14
+		local pull = 20/dist * grav
 	
 		child.xSpeed = child.xSpeed - (child.x - self.x)*pull
 		child.ySpeed = child.ySpeed - (child.y - self.y)*pull

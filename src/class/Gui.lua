@@ -16,7 +16,7 @@ function Gui:drawSpeed()
 end
 
 function Gui:drawWarp()
-	local warp = player.warpspeed
+	local warp = warpspeed
 	love.graphics.setColor(1, 1, 1)
 	love.graphics.printf("Warp Speed: x"..warp, 5, 5, width, "left")
 end

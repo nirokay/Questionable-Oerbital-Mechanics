@@ -6,6 +6,7 @@ require "libraries"
 -- General Data:
 info = require "data/info"
 controls = require "data/controls"
+settings = require "data/settings"
 texture = require "textures/textures"
 
 -- Game Source:

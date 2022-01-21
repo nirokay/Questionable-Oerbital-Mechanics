@@ -7,10 +7,14 @@ function love.load()
 	-- Declaration:
 	love.window.setTitle(info.name.." - v"..info.version)
 	width, height = love.graphics.getDimensions()
+
+	-- Camera:
 	cam = Camera()
-	zoomlevel = 0.5
+	zoomlevel = settings.zoom.reset
 
-
+	--Simulation:
+	warpspeed = 1
+	warpCoolDown = 0
 
 	-- Loading:
 	ships = {}				--Potentially add other starships in the future?
@@ -36,6 +40,7 @@ function loadPlanets()
 				-- Planet Data Assignment:
 				p.x, p.y,
 				p.r, p.m,
+				p.xSpeed, p.ySpeed,
 				p.name,
 				p.colour,
 				p.parent
@@ -65,26 +70,26 @@ end
 
 
 function cameraControls()
-	local zooming = 0.01
+	local step = settings.zoom.step
 
 	function love.wheelmoved(x, y)
 		if y > 0 then
 			-- Zoom in:
-			zoomlevel = zoomlevel + zooming
+			zoomlevel = zoomlevel + step
 		elseif y < 0 then
 			-- Zoom out:
-			zoomlevel = zoomlevel - zooming
+			zoomlevel = zoomlevel - step
 		end
 	end
 
 	-- Reset Zoom:
-	if love.mouse.isDown(3) then
-		zoomlevel = 1
+	if love.mouse.isDown(controls.camera.zoom.reset) then
+		zoomlevel = settings.zoom.reset
 	end
 
 	-- Zoom Limit:
-	local max = 4
-	local min = 0.001
+	local max = settings.zoom.max
+	local min = settings.zoom.min
 	if zoomlevel < min then
 		zoomlevel = min
 	end
@@ -95,14 +100,54 @@ function cameraControls()
 	cam:zoomTo(zoomlevel)
 end
 
+function timewarpControls()
+	-- Time Warp Toggle Cooldowns:
+	local maxCooldown = settings.warp.cooldown
+	
+	-- Time Warp Steps:
+	local step = settings.warp.step
+	-- Time Warp Limits:
+	local min = settings.warp.min
+	local max = settings.warp.max
+
+	-- Decrease Warp
+	if love.keyboard.isDown(controls.flight.warp.down) and warpCoolDown <= 0 then
+		warpspeed = warpspeed - step
+		warpCoolDown = maxCooldown
+	end
+	-- Increase Warp
+	if love.keyboard.isDown(controls.flight.warp.up) and warpCoolDown <= 0 then
+		warpspeed = warpspeed + step
+		warpCoolDown = maxCooldown
+	end
+	-- Reset Warp
+	if love.keyboard.isDown(controls.flight.warp.reset) then
+		warpspeed = min
+	end
+
+	-- Value Correction
+	if warpspeed < min then
+		warpspeed = min
+	elseif warpspeed > max then 
+		warpspeed = max
+	end
+
+	warpCoolDown = warpCoolDown - 1
+	return warpspeed
+end
+
 
 
 -- MAIN
 
 function love.update(dt)
 	-- Game Objects:
-	updatePlanets()
-	player:update(dt)
+	for i=1, timewarpControls() do
+		-- Physics go in here:
+		updatePlanets()
+		player:update(dt)
+	end
+	player:throttleControls()
 
 	-- Gui:
 	gui:update(dt)
