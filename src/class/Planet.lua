@@ -41,7 +41,7 @@ end
 -- FUNCTIONS
 
 function Planet:getSpeed()
-	return math.abs(self.xSpeed) + math.abs(self.ySpeed)
+	return math.abs(self.xSpeed) + math.abs(self.ySpeed) + math.abs(self.orbitalY) + math.abs(self.orbitalX)
 end
 
 function Planet:updatePosition()
@@ -95,4 +95,6 @@ function Planet:draw()
 	local col = self.colour
 	love.graphics.setColor(calc.c(col[1]), calc.c(col[2]), calc.c(col[3]))
 	love.graphics.circle("fill", self.x, self.y, self.r)
+	love.graphics.setColor(0.1,0.1,0.1,0.2)
+	love.graphics.circle("fill", self.x, self.y, self.r*2)
 end

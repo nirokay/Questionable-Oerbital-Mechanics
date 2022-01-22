@@ -9,6 +9,9 @@ function Player:init(tempX, tempY, tempT)
 	self.xStart = tempX
 	self.yStart = tempY
 
+	self.orbitalX = 0
+	self.orbitalY = 0
+
 	-- Speed:
 	self.xSpeed = 0
 	self.ySpeed = 0
@@ -30,6 +33,7 @@ function Player:init(tempX, tempY, tempT)
 
 	-- Status:
 	self.exploding = false
+	self.inRange = nil
 
 	--TEXTURE HERE?
 	self.texture = love.graphics.newImage(starshipTypes[tempT].texture)
@@ -73,7 +77,7 @@ end
 function Player:reset()
 	self.x = self.xStart
 	self.y = self.yStart
-
+	self.landingspeed = 0
 	self.angle = calc.pi/2
 	self.xSpeed = 0
 	self.ySpeed = 0
@@ -145,7 +149,7 @@ function Player:flightControls()
 end
 
 function Player:getSpeed()		-- absolute speed
-	return math.abs(self.xSpeed) + math.abs(self.ySpeed)
+	return math.abs(self.xSpeed) + math.abs(self.ySpeed) + math.abs(self.orbitalY) + math.abs(self.orbitalX)
 end
 
 function Player:getSpeedTo(obj)		-- relative speed to an object
@@ -169,7 +173,7 @@ end
 function Player:isLanded()
     local landed = false
     for i, p in ipairs(planet) do
-        if self:getOrbitHeight(p) <= 0 then
+        if self:getOrbitHeight(p) <= 1 then
             landed = true
 			self.landedOn = p
 			debug("Player touched down on: "..p.name)
@@ -191,13 +195,29 @@ function Player:gravity()
 	if self:isLanded() then
 		-- Player is landed:
 		local p = self.landedOn
-		self.xSpeed, self.ySpeed = math.abs(p.xSpeed), math.abs(p.ySpeed)
+		self.xSpeed, self.ySpeed = 0, 0
+		
+	end
+	local p = calc.closestObj(player)
+	if self:getOrbitHeight(p) < p.r and p.parent then 
+		if self.inRange ~= p then 
+			self.xSpeed = 0
+			self.ySpeed = 0
+			self.inRange = p 
+		end 
+		self.orbitalX = p.xSpeed + p.orbitalX 
+		self.orbitalY = p.ySpeed + p.orbitalY 
+		debug("Synced speed" .. self.orbitalX .. " " .. self.orbitalY .. " with " .. p.name)
+	else 
+		self.inRange = nil
+		self.orbitalX = 0 
+		self.orbitalY = 0
 	end
 end
 
 function Player:updatePosition()
-	self.x = self.x + self.xSpeed
-	self.y = self.y + self.ySpeed
+	self.x = self.x + self.xSpeed + self.orbitalX 
+	self.y = self.y + self.ySpeed + self.orbitalY
 end
 
 function Player:drawTexture(x, y, r)
@@ -207,7 +227,7 @@ function Player:drawTexture(x, y, r)
 	-- Draw Texture
 	love.graphics.setColor(1, 1, 1)
 	love.graphics.draw(self.texture, self.x, self.y, -(self.angle-calc.pi/2), 1, 1, self.width/2, self.height/2)
-	debug("Angle: "..self.angle)
+	--debug("Angle: "..self.angle)
 end
 
 
