@@ -29,7 +29,10 @@ controls = {
 			reset =  "-",
 			down =   ",",
 			up =     "."
-		}
+		},
+
+		-- Special
+		special = "f"
 	},
 	
 	-- Player Camera Controls:

@@ -1,6 +1,6 @@
 Player = Class {}
 
-function Player:init(tempX, tempY)
+function Player:init(tempX, tempY, tempT)
 	-- Position: (variable)
 	self.x = tempX
 	self.y = tempY
@@ -15,20 +15,22 @@ function Player:init(tempX, tempY)
 
 	-- Speed Change: (throttle 0 - 1; variable) (speed; constant (max speed change))
 	self.throttle = 0.5
-	self.speed = 0.05
+	self.speed = starshipTypes[tempT].speed
 
 	-- Landings:
-	self.impacttolerance = 0.5
+	self.impacttolerance = starshipTypes[tempT].impacttolerance
 	self.landingspeed = 0
 
 	-- Mass:
-	self.m = 10
+	self.m = starshipTypes[tempT].mass
 
 	-- Rotation:
 	self.angle = calc.pi/2
 
 	-- Status:
 	self.exploding = false
+
+	--TEXTURE HERE?
 end
 
 

@@ -8,6 +8,7 @@ info = require "data/info"
 controls = require "data/controls"
 settings = require "data/settings"
 texture = require "textures/textures"
+starshipTypes = require "data/starshipTypes"
 
 -- Game Source:
 calc = require "src/calc"
