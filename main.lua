@@ -1,13 +1,32 @@
-require "import"
--- Debugging / Logging:
-debug = calc.debug
-calc.isDebug = true
-
 function love.load()
+	require "import"
+	-- Debugging / Logging:
+	debug = calc.debug
+	calc.isDebug = true
+
 	-- Declaration:
 	love.window.setTitle(info.name.." - v"..info.version)
-	--love.graphics.setDefaultFilter("nearest", "nearest")
 	width, height = love.graphics.getDimensions()
+
+	-- Gamestate:
+	gamestate = {
+		quit = "stateQUIT",
+		menu = "stateMENU",
+		game = "stateGAME"
+	}
+	GAMESTATE = gamestate.menu
+
+	-- Menubuttons:
+	menubutton = {
+		menu = {
+			startGame = Menubutton(20, 100, 200, 50, gamestate.game, nil, "Start Game", {255, 255, 255}, {57, 45, 66}),
+			quitGame = Menubutton(30, 170, 180, 40, gamestate.quit, nil, "Quit Game", {255, 255, 255}, {57, 45, 66})
+		},
+		game = {
+			-- Pause button or something here in future?
+		}
+	}
+
 
 	-- Camera:
 	cam = Camera()
@@ -152,37 +171,59 @@ end
 -- MAIN
 
 function love.update(dt)
-	-- Game Objects:
-	for i=1, timewarpControls() do
-		-- Physics go in here:
-		updatePlanets()
-		player:update(dt)
+	if GAMESTATE == gamestate.quit then
+		debug("Game has been quit, goodbye :)")
+		love.event.quit(0)
+
+	elseif GAMESTATE == gamestate.menu then
+		menubutton.menu.startGame:update(dt)
+		menubutton.menu.quitGame:update(dt)
+
+	elseif GAMESTATE == gamestate.game then
+		-- Game Objects:
+		for i=1, timewarpControls() do
+			-- Physics go in here:
+			updatePlanets()
+			player:update(dt)
+		end
+		player:throttleControls()
+
+		-- Gui:
+		gui:update(dt)
+
+		-- Camera:
+		cam:lookAt(player.x, player.y)
+		cameraControls()
+		--debug(player.x .. " " .. player.y)
 	end
-	player:throttleControls()
-
-	-- Gui:
-	gui:update(dt)
-
-	-- Camera:
-	cam:lookAt(player.x, player.y)
-	cameraControls()
-	--debug(player.x .. " " .. player.y)
 end
 
 function love.draw()
-	cam:attach()
-		-- Game Objects:
-		drawPlanets()
-		drawEffects()
-		player:draw()
+	if GAMESTATE == gamestate.menu then
+		-- Game Title:
+		love.graphics.setColor(1, 1, 0.6)
+		love.graphics.setFont(font.gametitle)
+		love.graphics.printf(info.title, 20, 20, width, "left")
 
-		-- Camera Zoom Player Location Indicator:                              OVERWORK SOON PLS KAY; IT UGLY
-		if zoomlevel < 0.3 then
-			love.graphics.setColor(1, 1, 1, 0.2)
-			love.graphics.circle("fill", player.x, player.y, (1/zoomlevel)*10)
-		end
-	cam:detach()
+		-- Buttons:
+		menubutton.menu.startGame:draw()
+		menubutton.menu.quitGame:draw()
 
-	-- Gui:
-	gui:draw()
+	elseif GAMESTATE == gamestate.game then
+		cam:attach()
+			-- Game Objects:
+			drawPlanets()
+			drawEffects()
+			player:draw()
+
+			-- Camera Zoom Player Location Indicator:                              OVERWORK SOON PLS KAY; IT UGLY
+			if zoomlevel < 0.3 then
+				love.graphics.setColor(1, 1, 1, 0.2)
+				love.graphics.circle("fill", player.x, player.y, (1/zoomlevel)*10)
+			end
+		cam:detach()
+
+		-- Gui:
+		gui:draw()
+	end
 end
