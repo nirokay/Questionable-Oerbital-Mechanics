@@ -33,6 +33,8 @@ function Player:init(tempX, tempY, tempT)
 
 	--TEXTURE HERE?
 	self.texture = love.graphics.newImage(starshipTypes[tempT].texture)
+	self.width = self.texture:getWidth()
+	self.height = self.texture:getHeight()
 end
 
 
@@ -72,6 +74,7 @@ function Player:reset()
 	self.x = self.xStart
 	self.y = self.yStart
 
+	self.angle = calc.pi/2
 	self.xSpeed = 0
 	self.ySpeed = 0
 end
@@ -200,12 +203,10 @@ end
 function Player:drawTexture(x, y, r)
 	-- Texture offset and size
 	local t = {s = 50}
-	t.x = x - love.graphics.getPixelWidth(self.texture)/2 -- ?????????????????????????????????
-	t.y = y - love.graphics.getPixelHeight(self.texture)/2
 
 	-- Draw Texture
 	love.graphics.setColor(1, 1, 1)
-	love.graphics.draw(self.texture, t.x, t.y, r)
+	love.graphics.draw(self.texture, self.x, self.y, -(self.angle-calc.pi/2), 1, 1, self.width/2, self.height/2)
 	debug("Angle: "..self.angle)
 end
 
@@ -230,7 +231,10 @@ function Player:draw()
 	local x, y = self.x, self.y
 	local dist = 10
 
+	if not self.exploding then 
 	self:drawTexture(x, y, calc.pi/2 - self.angle)
+	end 
+
 
 	if not self.exploding then 
 		if calc.isDebug then
