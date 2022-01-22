@@ -24,16 +24,8 @@ function love.load()
 	loadPlanets()
 
 	local spawnPlanet = planet[1]
-<<<<<<< Updated upstream
-	player = Player(spawnPlanet.x, spawnPlanet.y-spawnPlanet.r-1, "orbiter")
-=======
-<<<<<<< Updated upstream
-	player = Player(spawnPlanet.x, spawnPlanet.y-spawnPlanet.r-1)
-=======
 	player = Player(spawnPlanet.x, spawnPlanet.y-spawnPlanet.r-1, "orbiter")
 	player.xSpeed, player.ySpeed = spawnPlanet.xSpeed, spawnPlanet.ySpeed
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 	gui = Gui(1)
 	effects = {}
 end

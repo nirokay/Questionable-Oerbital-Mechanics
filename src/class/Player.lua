@@ -30,17 +30,9 @@ function Player:init(tempX, tempY, tempT)
 
 	-- Status:
 	self.exploding = false
-<<<<<<< Updated upstream
-
-	--TEXTURE HERE?
-=======
-<<<<<<< Updated upstream
-=======
 
 	--TEXTURE HERE?
 	self.texture = love.graphics.newImage(starshipTypes[tempT].texture)
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 end
 
 
