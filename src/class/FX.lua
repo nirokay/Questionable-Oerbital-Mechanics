@@ -29,7 +29,7 @@ end
 
 
 function FX:draw()
-    debug("drawing flash")
+    --debug("drawing flash")
     if self.type == "flash" then 
         self:flash()
     end

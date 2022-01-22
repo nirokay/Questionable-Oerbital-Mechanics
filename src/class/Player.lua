@@ -20,6 +20,7 @@ function Player:init(tempX, tempY, tempT)
 	-- Landings:
 	self.impacttolerance = starshipTypes[tempT].impacttolerance
 	self.landingspeed = 0
+	self.landedOn = nil
 
 	-- Mass:
 	self.m = starshipTypes[tempT].mass
@@ -29,8 +30,17 @@ function Player:init(tempX, tempY, tempT)
 
 	-- Status:
 	self.exploding = false
+<<<<<<< Updated upstream
 
 	--TEXTURE HERE?
+=======
+<<<<<<< Updated upstream
+=======
+
+	--TEXTURE HERE?
+	self.texture = love.graphics.newImage(starshipTypes[tempT].texture)
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 end
 
 
@@ -78,44 +88,39 @@ function Player:flightControls()
 	-- Anti-clipping feature 
 	local closestPla = calc.closestObj(player)
 
-
 	-- Movement:
 	local speedChange = self.speed * self.throttle
 	
 	-- Directional Thrust:
 	if love.keyboard.isDown(controls.flight.thrust.up)then
 		if (calc.distance(closestPla.x, closestPla.y, self.x, self.y) > calc.distance(closestPla.x, closestPla.y, self.x, self.y-10) and self:isLanded()) then 
-			debug("Flying into a planet!")
+			--debug("Flying into a planet!")
 		else
 			self.ySpeed = self.ySpeed - speedChange
-			debug("Player control: up")
 		end
 	end
 
 	if love.keyboard.isDown(controls.flight.thrust.down) then
 		if (calc.distance(closestPla.x, closestPla.y, self.x, self.y) > calc.distance(closestPla.x, closestPla.y, self.x, self.y+10) and self:isLanded()) then 
-			debug("Flying into a planet!")
+			--debug("Flying into a planet!")
 		else
 			self.ySpeed = self.ySpeed + speedChange
-			debug("Player control: down")
 		end
 	end
 
 	if love.keyboard.isDown(controls.flight.thrust.left) then
 		if (calc.distance(closestPla.x, closestPla.y, self.x, self.y) > calc.distance(closestPla.x, closestPla.y, self.x-10, self.y) and self:isLanded()) then 
-			debug("Flying into a planet!")
+			--debug("Flying into a planet!")
 		else
 			self.xSpeed = self.xSpeed - speedChange
-			debug("Player control: left")
 		end
 	end
 
 	if love.keyboard.isDown(controls.flight.thrust.right) then
 		if (calc.distance(closestPla.x, closestPla.y, self.x, self.y) > calc.distance(closestPla.x, closestPla.y, self.x+10, self.y) and self:isLanded()) then 
-			debug("Flying into a planet!")
+			--debug("Flying into a planet!")
 		else
 			self.xSpeed = self.xSpeed + speedChange
-			debug("Player control: right")
 		end
 	end
 
@@ -126,7 +131,7 @@ function Player:flightControls()
 			debug("Flying into a planet!")
 		else
 			self.xSpeed = self.xSpeed + math.cos(self.angle) * speedChange*2 
-			debug("Ship thrusters X: " .. math.cos(self.angle) .. " " .. math.sin(self.angle) .. " " .. self.angle)
+			--debug("Ship thrusters X: " .. math.cos(self.angle) .. " " .. math.sin(self.angle) .. " " .. self.angle)
 			self.ySpeed = self.ySpeed - math.sin(self.angle) * speedChange*2
 		end 
 	end
@@ -141,19 +146,19 @@ function Player:flightControls()
 	-- Reset:
 	if love.keyboard.isDown(controls.flight.reset) then
 		self:reset()
-		debug("Player control: reset")
 	end
 end
 
-function Player:getSpeed()
-	local x, y = self.xSpeed, self.ySpeed
-	if x < 0 then
-		x = -x
-	end
-	if y < 0 then
-		y = -y
-	end
-	return x+y
+function Player:getSpeed()		-- absolute speed
+	return math.abs(self.xSpeed) + math.abs(self.ySpeed)
+end
+
+function Player:getSpeedTo(obj)		-- relative speed to an object
+	return math.abs(self:getSpeed() - obj:getSpeed())
+end
+
+function Player:getOrbitHeight(obj) -- gets the height of the orbit (above surface)
+	return calc.distance(self.x, self.y, obj.x, obj.y)-obj.r
 end
 
 function Player:hasCrashed() --Testing function, see if a player is inside a planet
@@ -168,15 +173,19 @@ end
 
 function Player:isLanded()
     local landed = false
-    for i=1, #planet do
-        local pla = planet[i]
-        if calc.distance(self.x, self.y, pla.x, pla.y) <= pla.r then
+    for i, p in ipairs(planet) do
+        if self:getOrbitHeight(p) <= 0 then
             landed = true
+			self.landedOn = p
+			debug("Player touched down on: "..p.name)
         end
     end
     -- Save Landing Speed:
     if landed then
-        self.landingspeed = self:getSpeed()
+		local player = math.abs(self:getSpeed())
+		local planet = math.abs(self.landedOn:getSpeed())
+
+        self.landingspeed = math.abs(player-planet)
         debug("Landing speed: "..self.landingspeed)
     end
 	self:hasCrashed()
@@ -186,7 +195,8 @@ end
 function Player:gravity()
 	if self:isLanded() then
 		-- Player is landed:
-		self.xSpeed, self.ySpeed = 0, 0
+		local p = self.landedOn
+		self.xSpeed, self.ySpeed = math.abs(p.xSpeed), math.abs(p.ySpeed)
 	end
 end
 
@@ -195,13 +205,23 @@ function Player:updatePosition()
 	self.y = self.y + self.ySpeed
 end
 
+function Player:drawTexture(x, y, r)
+	-- Texture offset and size
+	local t = {s = 50}
+	t.x = x - love.graphics.getPixelWidth(self.texture)/2 -- ?????????????????????????????????
+	t.y = y - love.graphics.getPixelHeight(self.texture)/2
+
+	-- Draw Texture
+	love.graphics.setColor(1, 1, 1)
+	love.graphics.draw(self.texture, t.x, t.y, r)
+	debug("Angle: "..self.angle)
+end
+
 
 
 -- MAIN
 
 function Player:update(dt)
-	--debug(self.warpspeed)
-	
 	if self.angle > calc.pi*2 then 
 		self.angle = 0
 	elseif self.angle < 0 then 
@@ -217,23 +237,15 @@ end
 function Player:draw()
 	local x, y = self.x, self.y
 	local dist = 10
-	-- Funky arrow type form
-	local vertices = {
-		-- Top
-		x, y-dist,
-		-- Left Bottom
-		x-dist, y+dist,
-		-- Middle Down
-		x, y+dist/2,
-		-- Right Bottom
-		x+dist, y+dist
-	}
-	if not self.exploding then 
-		love.graphics.setColor(0.5, 0.5, 0.7)
-		love.graphics.polygon("fill", vertices)
 
-		love.graphics.setColor(1, 0, 0)
-		love.graphics.circle("fill", x, y, 5, 20)
+	self:drawTexture(x, y, calc.pi/2 - self.angle)
+
+	if not self.exploding then 
+		if calc.isDebug then
+			-- Debugging Draw of actual Player Position
+			love.graphics.setColor(1, 0, 0)
+			love.graphics.circle("fill", x, y, 5, 20)
+		end
 
 		-- Directional Circle (temporary until actual rotatable ship texture is made)
 		love.graphics.circle("fill", x+dist*(1/zoomlevel*2)*math.cos(self.angle), y-dist*(1/zoomlevel*2)*math.sin(self.angle), 1/zoomlevel*2)

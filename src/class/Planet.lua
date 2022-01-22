@@ -33,8 +33,6 @@ function Planet:init(tempX, tempY, tempR, tempM, tempXSpeed, tempYSpeed, tempNam
 		self.parent = planet[tempP]
 		table.insert(planet[tempP].children, self)
 	end 
-
-
 end
 
 
@@ -42,10 +40,25 @@ end
 
 -- FUNCTIONS
 
+function Planet:getSpeed()
+	return math.abs(self.xSpeed) + math.abs(self.ySpeed)
+end
+
 function Planet:updatePosition()
+<<<<<<< Updated upstream
 	self.x = self.x + self.xSpeed + self.orbitalX
 	self.y = self.y + self.ySpeed + self.orbitalY
+=======
+<<<<<<< Updated upstream
+	self.x = self.x + self.xSpeed
+	self.y = self.y + self.ySpeed
+>>>>>>> Stashed changes
 	debug("Updating position of planet " .. self.name .. ": " .. self.x .. " " .. self.y)
+=======
+	self.x = self.x + self.xSpeed + self.orbitalX
+	self.y = self.y + self.ySpeed + self.orbitalY
+	--debug("Updating position of planet " .. self.name .. ": " .. self.x .. " " .. self.y)
+>>>>>>> Stashed changes
 end
 
 function Planet:attract(dt)		--Planet doing the attracting, divided in two parts:	
@@ -93,5 +106,4 @@ function Planet:draw()
 	local col = self.colour
 	love.graphics.setColor(calc.c(col[1]), calc.c(col[2]), calc.c(col[3]))
 	love.graphics.circle("fill", self.x, self.y, self.r)
-	
 end

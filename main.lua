@@ -6,6 +6,7 @@ calc.isDebug = true
 function love.load()
 	-- Declaration:
 	love.window.setTitle(info.name.." - v"..info.version)
+	--love.graphics.setDefaultFilter("nearest", "nearest")
 	width, height = love.graphics.getDimensions()
 
 	-- Camera:
@@ -23,7 +24,16 @@ function love.load()
 	loadPlanets()
 
 	local spawnPlanet = planet[1]
+<<<<<<< Updated upstream
 	player = Player(spawnPlanet.x, spawnPlanet.y-spawnPlanet.r-1, "orbiter")
+=======
+<<<<<<< Updated upstream
+	player = Player(spawnPlanet.x, spawnPlanet.y-spawnPlanet.r-1)
+=======
+	player = Player(spawnPlanet.x, spawnPlanet.y-spawnPlanet.r-1, "orbiter")
+	player.xSpeed, player.ySpeed = spawnPlanet.xSpeed, spawnPlanet.ySpeed
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 	gui = Gui(1)
 	effects = {}
 end
@@ -33,8 +43,7 @@ end
 
 function loadPlanets()
 	debug("Planets in planet table: "..#planetdata)
-	for i=1, #planetdata do
-		local p = planetdata[i]
+	for i, p in ipairs(planetdata) do
 		debug(p.name.." is loading")
 		table.insert(planet, i, 
 			Planet(

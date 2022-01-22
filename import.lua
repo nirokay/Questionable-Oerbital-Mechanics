@@ -5,10 +5,18 @@ require "libraries"
 
 -- General Data:
 info = require "data/info"
+texture = require "textures/textures"
 controls = require "data/controls"
 settings = require "data/settings"
+<<<<<<< Updated upstream
 texture = require "textures/textures"
+<<<<<<< Updated upstream
 starshipTypes = require "data/starshipTypes"
+=======
+=======
+starshipTypes = require "data/starshipTypes"
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 -- Game Source:
 calc = require "src/calc"

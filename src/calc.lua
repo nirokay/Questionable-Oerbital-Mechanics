@@ -48,7 +48,6 @@ function calc.closestObj(target)
 	end
 
 	return minPlanet 
-
 end
 
 
