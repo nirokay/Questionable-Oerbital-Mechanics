@@ -189,7 +189,7 @@ function Player:isLanded()
         if self:getOrbitHeight(p) <= 1 then
             landed = true
 			self.landedOn = p
-			debug("Player touched down on: "..p.name)
+			--debug("Player touched down on: "..p.name)
         end
     end
     -- Save Landing Speed:
@@ -198,7 +198,7 @@ function Player:isLanded()
 		local planet = math.abs(self.landedOn:getSpeed())
 
         self.landingspeed = math.abs(player-planet)
-        debug("Landing speed: "..self.landingspeed)
+        --debug("Landing speed: "..self.landingspeed)
     end
 	self:hasCrashed()
     return landed

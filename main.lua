@@ -27,6 +27,16 @@ function love.load()
 		}
 	}
 
+	-- Buttons:
+	button = {
+		tutorial = Button(width - 70, 20, 50, 30, "help", {255, 255, 255}, {40, 40, 40}, false)
+	}
+
+	-- Textboxes:
+	textbox = {
+		tutorial = Textbox(40, 40, width-80, height-80, text.tutorial, "center", {255, 255, 255}, {0, 0, 0})
+	}
+
 
 	-- Camera:
 	cam = Camera()
@@ -119,8 +129,7 @@ function cameraControls()
 	end
 
 	-- Zoom Limit:
-	local max = settings.zoom.max
-	local min = settings.zoom.min
+	local max, min = settings.zoom.max, settings.zoom.min
 	if zoomlevel < min then
 		zoomlevel = min
 	end
@@ -221,13 +230,11 @@ function love.update(dt)
 
 		-- Gui:
 		gui:update(dt)
+		button.tutorial:update()
 
 		-- Camera:
 		cam:lookAt(player.x, player.y)
 		cameraControls()
-		--debug(player.x .. " " .. player.y)
-
-		
 	end
 	menubuttonUpdate()
 end
@@ -250,6 +257,11 @@ function love.draw()
 		-- Gui:
 		player:drawPositionIndicator()
 		gui:draw()
+
+		if button.tutorial.isActive then
+			textbox.tutorial:draw()
+		end
+		button.tutorial:draw()
 	end
 	menubuttonDraw()
 end
