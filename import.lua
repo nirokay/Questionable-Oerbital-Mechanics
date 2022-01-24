@@ -4,8 +4,8 @@
 require "libraries"
 
 -- General Data:
-info = require "data/info"
 texture = require "textures/textures"
+info = require "data/info"
 controls = require "data/controls"
 settings = require "data/settings"
 starshipTypes = require "data/starshipTypes"

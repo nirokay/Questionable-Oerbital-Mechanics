@@ -19,8 +19,8 @@ function love.load()
 	-- Menubuttons:
 	menubutton = {
 		menu = {
-			startGame = Menubutton(20, 100, 200, 50, gamestate.game, nil, "Start Game", {255, 255, 255}, {57, 45, 66}),
-			quitGame = Menubutton(30, 170, 180, 40, gamestate.quit, nil, "Quit Game", {255, 255, 255}, {57, 45, 66})
+			Menubutton(20, 100, 200, 50, gamestate.game, nil, "Start Game", {255, 255, 255}, {57, 45, 66}),
+			Menubutton(30, 170, 180, 40, gamestate.quit, nil, "Quit Game", {255, 255, 255}, {57, 45, 66})
 		},
 		game = {
 			-- Pause button or something here in future?
@@ -83,6 +83,9 @@ function drawPlanets()
 	end
 end
 
+
+-- Effects
+
 function drawEffects()
 	for i=1, #effects do 
 		effects[i]:draw()
@@ -96,8 +99,6 @@ end
 
 
 -- Camera
-
-
 
 function cameraControls()
 	local step = settings.zoom.step
@@ -129,6 +130,9 @@ function cameraControls()
 	--debug(zoomlevel)
 	cam:zoomTo(zoomlevel)
 end
+
+
+-- Time Warp
 
 function timewarpControls()
 	-- Time Warp Toggle Cooldowns:
@@ -167,6 +171,35 @@ function timewarpControls()
 end
 
 
+-- Menubuttons
+
+function menubuttonUpdate()
+	if GAMESTATE == gamestate.menu then
+		for i, button in ipairs(menubutton.menu) do
+			button:update()
+		end
+
+	elseif GAMESTATE == gamestate.game then
+		for i, button in ipairs(menubutton.game) do
+			button:update()
+		end
+
+	end
+end
+
+function menubuttonDraw()
+	if GAMESTATE == gamestate.menu then
+		for i, button in ipairs(menubutton.menu) do
+			button:draw()
+		end
+
+	elseif GAMESTATE == gamestate.game then
+		for i, button in ipairs(menubutton.game) do
+			button:draw()
+		end
+	end
+end
+
 
 -- MAIN
 
@@ -176,8 +209,6 @@ function love.update(dt)
 		love.event.quit(0)
 
 	elseif GAMESTATE == gamestate.menu then
-		menubutton.menu.startGame:update(dt)
-		menubutton.menu.quitGame:update(dt)
 
 	elseif GAMESTATE == gamestate.game then
 		-- Game Objects:
@@ -195,7 +226,10 @@ function love.update(dt)
 		cam:lookAt(player.x, player.y)
 		cameraControls()
 		--debug(player.x .. " " .. player.y)
+
+		
 	end
+	menubuttonUpdate()
 end
 
 function love.draw()
@@ -205,25 +239,17 @@ function love.draw()
 		love.graphics.setFont(font.gametitle)
 		love.graphics.printf(info.title, 20, 20, width, "left")
 
-		-- Buttons:
-		menubutton.menu.startGame:draw()
-		menubutton.menu.quitGame:draw()
-
 	elseif GAMESTATE == gamestate.game then
 		cam:attach()
 			-- Game Objects:
 			drawPlanets()
 			drawEffects()
 			player:draw()
-
-			-- Camera Zoom Player Location Indicator:                              OVERWORK SOON PLS KAY; IT UGLY
-			if zoomlevel < 0.3 then
-				love.graphics.setColor(1, 1, 1, 0.2)
-				love.graphics.circle("fill", player.x, player.y, (1/zoomlevel)*10)
-			end
 		cam:detach()
 
 		-- Gui:
+		player:drawPositionIndicator()
 		gui:draw()
 	end
+	menubuttonDraw()
 end

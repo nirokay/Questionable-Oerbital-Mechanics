@@ -9,6 +9,7 @@ function Player:init(tempX, tempY, tempT)
 	self.xStart = tempX
 	self.yStart = tempY
 
+	-- Speed of Parent:
 	self.orbitalX = 0
 	self.orbitalY = 0
 
@@ -32,18 +33,25 @@ function Player:init(tempX, tempY, tempT)
 	self.angle = calc.pi/2
 
 	-- Status:
+	self.isAccelerating = false
 	self.exploding = false
 	self.inRange = nil
 
-	--TEXTURE HERE?
-	self.texture = love.graphics.newImage(starshipTypes[tempT].texture)
-	self.width = self.texture:getWidth()
-	self.height = self.texture:getHeight()
+	-- Spacecraft Textures:
+	self.texture = {
+		ship = starshipTypes[tempT].textures.ship,
+		fullThrust = starshipTypes[tempT].textures.fullThrust,
+		lowThrust = starshipTypes[tempT].textures.lowThrust
+	}
+	self.width = self.texture.ship:getWidth()
+	self.height = self.texture.ship:getHeight()
 end
 
 
 
 -- FUNCTIONS
+
+-- Player Controls:
 
 function Player:throttleControls()
 	local change = 0.01
@@ -129,9 +137,11 @@ function Player:flightControls()
 		if (calc.distance(closestPla.x, closestPla.y, self.x, self.y) > calc.distance(closestPla.x, closestPla.y, self.x+self.xSpeed + math.cos(self.angle) * speedChange*2, self.y+self.ySpeed - math.sin(self.angle) * speedChange*2) and self:isLanded()) then    --Holy moly this is long
 			debug("Flying into a planet!")
 		else
-			self.xSpeed = self.xSpeed + math.cos(self.angle) * speedChange*2 
+			self.xSpeed = self.xSpeed + math.cos(self.angle) * speedChange*10
 			--debug("Ship thrusters X: " .. math.cos(self.angle) .. " " .. math.sin(self.angle) .. " " .. self.angle)
-			self.ySpeed = self.ySpeed - math.sin(self.angle) * speedChange*2
+			self.ySpeed = self.ySpeed - math.sin(self.angle) * speedChange*10
+
+			self.isAccelerating = true
 		end 
 	end
 	if love.keyboard.isDown(controls.flight.thrust.rotleft) then 
@@ -147,6 +157,9 @@ function Player:flightControls()
 		self:reset()
 	end
 end
+
+
+-- Get Player Data:
 
 function Player:getSpeed()		-- absolute speed
 	return math.abs(self.xSpeed) + math.abs(self.ySpeed) + math.abs(self.orbitalY) + math.abs(self.orbitalX)
@@ -191,6 +204,9 @@ function Player:isLanded()
     return landed
 end
 
+
+-- Player Calculations:
+
 function Player:gravity()
 	if self:isLanded() then
 		-- Player is landed:
@@ -220,14 +236,25 @@ function Player:updatePosition()
 	self.y = self.y + self.ySpeed + self.orbitalY
 end
 
-function Player:drawTexture(x, y, r)
+
+-- Graphics / Drawing:
+
+function Player:drawTexture(x, y, r, s, texture)
 	-- Texture offset and size
-	local t = {s = 50}
+	local w, h = texture:getWidth(), texture:getHeight()
 
 	-- Draw Texture
 	love.graphics.setColor(1, 1, 1)
-	love.graphics.draw(self.texture, self.x, self.y, -(self.angle-calc.pi/2), 1, 1, self.width/2, self.height/2)
+	love.graphics.draw(texture, x, y, -(self.angle-calc.pi/2), s, s, w/2, h/2)
 	--debug("Angle: "..self.angle)
+end
+
+function Player:drawPositionIndicator(x, y)
+	-- Directional Arrow (when zoomed out)
+	if zoomlevel < settings.zoom.arrowAppear then
+		local s = 0.03
+		self:drawTexture(width/2, height/2, calc.pi/2 - self.angle, s, texture.ui.arrow.red)
+	end
 end
 
 
@@ -235,6 +262,7 @@ end
 -- MAIN
 
 function Player:update(dt)
+	self.isAccelerating = false
 	if self.angle > calc.pi*2 then 
 		self.angle = 0
 	elseif self.angle < 0 then 
@@ -248,22 +276,29 @@ function Player:update(dt)
 end
 
 function Player:draw()
-	local x, y = self.x, self.y
+	local x, y, scale = self.x, self.y, 1
 	local dist = 10
-
+	local shake = 0
+	
+	-- Shake (to textures):
+	if self.isAccelerating then
+		shake = math.random(0, 1) * self.throttle
+		x, y = x + shake, y + shake
+	end
+	
+	-- Draw Spacecraft:
 	if not self.exploding then 
-	self:drawTexture(x, y, calc.pi/2 - self.angle)
-	end 
-
-
-	if not self.exploding then 
-		if calc.isDebug then
-			-- Debugging Draw of actual Player Position
-			love.graphics.setColor(1, 0, 0)
-			love.graphics.circle("fill", x, y, 5, 20)
+		-- Draw Thrust Exhaust:
+		if self.isAccelerating and self.throttle ~= 0 then
+			local limit = 0.5
+			if self.throttle < limit then
+				self:drawTexture(x, y, calc.pi/2 - self.angle, scale, self.texture.lowThrust)
+			else
+				self:drawTexture(x, y, calc.pi/2 - self.angle, scale, self.texture.fullThrust)
+			end
 		end
 
-		-- Directional Circle (temporary until actual rotatable ship texture is made)
-		love.graphics.circle("fill", x+dist*(1/zoomlevel*2)*math.cos(self.angle), y-dist*(1/zoomlevel*2)*math.sin(self.angle), 1/zoomlevel*2)
-	end 
+		-- Ship Texture Drawing:
+		self:drawTexture(x, y, calc.pi/2 - self.angle, scale, self.texture.ship)
+	end
 end
