@@ -4,6 +4,7 @@ calc = {}
 -- G-Constant
 calc.G = 6.67e-11 -- TWEAKABLE FOR LATER DEPENDING ON SCALE!!!!!!!!!!!
 calc.pi = 3.14
+
 -- Development debugging/logging thing
 function calc.debug(text)
 	if calc.isDebug then
@@ -50,5 +51,13 @@ function calc.closestObj(target)
 	return minPlanet 
 end
 
+-- Loops through a table and concatenate all stings (for textboxes)
+function calc.getText(stringTable)
+	local string = ""
+	for i, s in ipairs(stringTable) do
+		string = string .. s
+	end
+	return string
+end
 
 return calc
