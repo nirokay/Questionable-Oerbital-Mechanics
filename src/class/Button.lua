@@ -1,6 +1,6 @@
 Button = Class {}
 
-function Button:init(tempX, tempY, tempW, tempH, tempText, tempTC, tempBC, tempActive)
+function Button:init(tempX, tempY, tempW, tempH, tempText, tempTC, tempBC, tempActive, tempFn)
     -- Position and Dimensions:
 	self.x = tempX
     self.y = tempY
@@ -20,6 +20,9 @@ function Button:init(tempX, tempY, tempW, tempH, tempText, tempTC, tempBC, tempA
     -- Click Cooldown:
     self.cooldownLimit = 30
     self.cooldown = 0
+    if tempFn~=nil then 
+        self.fn = tempFn
+    end 
 end
 
 
@@ -49,6 +52,9 @@ function Button:update(dt)
     if self:click() and self.cooldown <= 0 then
         self.isActive = not self.isActive
         self.cooldown = self.cooldownLimit
+        if self.fn ~= nil then 
+            self.fn()
+        end
     end
     self.cooldown = self.cooldown - 1
 end
@@ -76,5 +82,5 @@ function Button:draw()
     -- Draw Text
     love.graphics.setFont(font.default)
     love.graphics.setColor(tx[1], tx[2], tx[3])
-    love.graphics.printf(self.text, x, y, w, "center")
+    love.graphics.printf(self.text, x, y+h/8, w, "center")
 end

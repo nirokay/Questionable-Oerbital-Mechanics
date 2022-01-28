@@ -29,12 +29,21 @@ function love.load()
 
 	-- Buttons:
 	button = {
-		tutorial = Button(width - 70, 20, 50, 30, "help", {255, 255, 255}, {40, 40, 40}, false)
+		tutorial = Button(width - 70, 20, 50, 30, "help", {255, 255, 255}, {40, 40, 40}, false),
+		pause = Button(width - 70, 60, 80, 30, "pause", {255, 255, 255}, {40, 40, 40}, false)
 	}
+
+	pausebutton = {
+		
+	}
+	table.insert(pausebutton, Button(width/2-250, height/2-25, 500, 50, "Continue", {255, 255, 255}, {40, 40, 40}, false, function() button.pause.isActive = false end))
+	table.insert(pausebutton, Button(width/2-250, height/2+35, 500, 50, "Main Menu", {255, 255, 255}, {40, 40, 40}, false, function() restartGame() GAMESTATE = gamestate.menu end))
+	table.insert(pausebutton, Button(width/2-250, height/2+95, 500, 50, "Quit", {255, 255, 255}, {40, 40, 40}, false, function() love.event.quit() end))
 
 	-- Textboxes:
 	textbox = {
-		tutorial = Textbox(40, 40, width-80, height-80, getText(text.tutorial), "center", {255, 255, 255}, {0, 0, 0})
+		tutorial = Textbox(40, 40, width-80, height-80, calc.getText(text.tutorial), "center", {255, 255, 255}, {0, 0, 0})
+		
 	}
 
 
@@ -220,6 +229,13 @@ function love.update(dt)
 	elseif GAMESTATE == gamestate.menu then
 
 	elseif GAMESTATE == gamestate.game then
+		button.pause:update()
+		if (button.pause.isActive) then 
+			for i, butt in ipairs(pausebutton) do 
+				butt:update()
+			end 
+			return 
+		end  
 		-- Game Objects:
 		for i=1, timewarpControls() do
 			-- Physics go in here:
@@ -231,6 +247,7 @@ function love.update(dt)
 		-- Gui:
 		gui:update(dt)
 		button.tutorial:update()
+		
 
 		-- Camera:
 		cam:lookAt(player.x, player.y)
@@ -257,11 +274,24 @@ function love.draw()
 		-- Gui:
 		player:drawPositionIndicator()
 		gui:draw()
-
+		button.tutorial:draw()
 		if button.tutorial.isActive then
 			textbox.tutorial:draw()
+		else
+			button.pause:draw()
+			if (button.pause.isActive) then 
+				for i, butt in ipairs(pausebutton) do 
+					butt:draw()
+				end 
+			end
 		end
-		button.tutorial:draw()
 	end
 	menubuttonDraw()
+end
+
+
+function restartGame()
+	button.pause.isActive = false 
+	button.tutorial.isActive = false
+	player:reset()
 end
