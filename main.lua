@@ -123,15 +123,17 @@ function cameraControls()
 	local step = settings.zoom.step
 
 	function love.wheelmoved(x, y)
-		if y > 0 then
-			-- Zoom in:
-			zoomlevel = zoomlevel + step*(zoomlevel*10)
-		elseif y < 0 then
-			-- Zoom out:
-			zoomlevel = zoomlevel - step*(zoomlevel*10)
+		if not button.pause.isActive then
+			if y > 0 then
+				-- Zoom in:
+				zoomlevel = zoomlevel + step*(zoomlevel*10)
+			elseif y < 0 then
+				-- Zoom out:
+				zoomlevel = zoomlevel - step*(zoomlevel*10)
+			end
 		end
 	end
-
+		
 	-- Reset Zoom:
 	if love.mouse.isDown(controls.camera.zoom.reset) then
 		zoomlevel = settings.zoom.reset
