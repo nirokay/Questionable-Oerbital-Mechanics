@@ -8,7 +8,7 @@ function Textbox:init(tempX, tempY, tempW, tempH, tempText, tempAlign, tempTC, t
     self.h = tempH
 
     -- Text:
-    self.text = calc.getText(tempText)
+    self.text = tempText
     self.align = tempAlign
 
     -- Colours:
