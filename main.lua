@@ -34,7 +34,7 @@ function love.load()
 
 	-- Textboxes:
 	textbox = {
-		tutorial = Textbox(40, 40, width-80, height-80, text.tutorial, "center", {255, 255, 255}, {0, 0, 0})
+		tutorial = Textbox(40, 40, width-80, height-80, getText(text.tutorial), "center", {255, 255, 255}, {0, 0, 0})
 	}
 
 
