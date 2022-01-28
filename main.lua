@@ -23,7 +23,7 @@ function love.load()
 			quitGame = Menubutton(30, 170, 180, 40, gamestate.quit, nil, "Quit Game", {255, 255, 255}, {57, 45, 66})
 		},
 		game = {
-			-- Pause button or something here in future?
+			-- Pause button or something here in future? 	
 		}
 	}
 
