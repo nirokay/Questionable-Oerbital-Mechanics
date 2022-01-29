@@ -14,7 +14,7 @@ In order to play this game you need to ...
 For now this is the only way to play this game. In future there will be binary versions availabe.
 
 
-### Installing Lua
+### Installing Lua (optional)
 Arch Linux:
 `sudo pacman -S lua`
 
@@ -30,6 +30,14 @@ Debian/Ubuntu Linux:
 
 Windows:
 https://love2d.org
+
+
+## Building from source code
+The script `build.sh` takes an argument (the project output name).
+
+Simply execute `./build.sh [insert project name]` in your terminal. The builder compiles to a windows executable (.exe) and an executable love (.love) file.
+
+Builds can be found in `./.build/builds/`!
 
 
 ## What's new?
