@@ -13,7 +13,7 @@ cat $path"/love/love.exe" $path"/builds/$1.love" > "$1.exe"
 mv "$1.exe" "$winPATH"
 
 # Moving dll's
-cp $path"/win/"* "$winPATH"
+cp $path"/love/"*".dll" "$winPATH"
 
 # Zip it if $doZip == "true"
 if [[ $doZip == "true" ]]; then
