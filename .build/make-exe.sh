@@ -4,7 +4,8 @@ doZip=true
 path="./.build"
 
 # Windows Folder
-winPATH=$path"/builds/$1-win"
+winDir=$1-win
+winPATH=$path"/builds/$winDir"
 mkdir "$winPATH"
 
 # Creating .exe
@@ -16,7 +17,11 @@ cp $path"/win/"* "$winPATH"
 
 # Zip it if $doZip == "true"
 if [[ $doZip == "true" ]]; then
+	currentPath=$( pwd )
+	cd "$path/builds"
 	name=$1"-win.zip"
-	zip "$path/builds/$name" -r "$winPATH" 
+	zip "$name" -r "$winDir"
+	
+	cd "$currentPath"
 	rm -rf "$winPATH"
 fi
