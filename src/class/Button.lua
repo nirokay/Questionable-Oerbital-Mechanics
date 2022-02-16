@@ -13,8 +13,8 @@ function Button:init(tempX, tempY, tempW, tempH, tempText, tempTC, tempBC, tempA
     -- Text and Colours:
     self.text = tempText
     self.colour = {
-        text = calc.colour(tempTC[1], tempTC[2], tempTC[3]),
-        background = calc.colour(tempBC[1], tempBC[2], tempBC[3])
+        text = tempTC,
+        background = tempBC
     }
 
     -- Click Cooldown:
@@ -76,11 +76,11 @@ function Button:draw()
     end
 
     -- Draw Background
-    love.graphics.setColor(bg[1], bg[2], bg[3])
+    calc.setColour(bg[1], bg[2], bg[3], bg[4])
     love.graphics.rectangle("fill", x, y, w, h)
 
     -- Draw Text
     love.graphics.setFont(font.default)
-    love.graphics.setColor(tx[1], tx[2], tx[3])
+    calc.setColour(tx[1], tx[2], tx[3], tx[4])
     love.graphics.printf(self.text, x, y+h/8, w, "center")
 end

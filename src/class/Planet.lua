@@ -93,8 +93,8 @@ end
 
 function Planet:draw()
 	local col = self.colour
-	love.graphics.setColor(calc.c(col[1]), calc.c(col[2]), calc.c(col[3]))
+	calc.setColour(col[1], col[2], col[3], col[4])
 	love.graphics.circle("fill", self.x, self.y, self.r)
-	love.graphics.setColor(0.1,0.1,0.1,0.2)
+	love.graphics.setColor(0.1, 0.1, 0.1, 0.2)
 	love.graphics.circle("fill", self.x, self.y, self.r*2)
 end

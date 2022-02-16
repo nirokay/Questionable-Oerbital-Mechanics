@@ -60,26 +60,20 @@ end
 function Menubutton:draw()
     local x, y, w, h = self.x, self.y, self.w, self.h
     local bg, tx = self.colour.background, self.colour.text
-    bg, tx = calc.colour(bg[1], bg[2], bg[3]), calc.colour(tx[1], tx[2], tx[3])
 
-    -- Hover Effects
+    -- Hover Effects:
     if self:hover() then
-        -- Slight Colour Lightup
-        for i = 1, #bg do
-            bg[i] = bg[i]*1.1
-        end
-
-        -- Slight pop up effect (purly visual)
+        -- Slight pop up effect (purly visual):
         local pop = 3
         x, y, w, h = x-pop, y-pop, w+pop*2, h+pop*2
     end
 
     -- Draw Background
-    love.graphics.setColor(bg[1], bg[2], bg[3])
+    calc.setColour(bg[1], bg[2], bg[3], bg[4])
     love.graphics.rectangle("fill", x, y, w, h)
 
     -- Draw Text
     love.graphics.setFont(font.default)
-    love.graphics.setColor(tx[1], tx[2], tx[3])
+    calc.setColour(tx[1], tx[2], tx[3], tx[4])
     love.graphics.printf(self.text, x, y, w, "center")
 end

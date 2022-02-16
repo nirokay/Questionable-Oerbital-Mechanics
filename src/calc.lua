@@ -15,14 +15,26 @@ function calc.debug(text)
 	end
 end
 
--- 0-255 colour to 0-1 colour (returns a table)
-function calc.colour(r, g, b)
-	return { r/255, g/255, b/255 }
-end
+-- Turn 0-1 colour to 0-range (default: 255):
+function calc.setColour(r, g, b, a)
+	-- Supported Inputs:
+	-- 	 RGB:        (r, g, b, a)
+	--   Greyscale:  (luminance, a)
+	local range = 255
 
--- 0-255 colour value to 0-1 colour value
-function calc.c(value)
-	return value/255
+	-- Set g and b value to r if in greyscale and :
+	if b == nil and a == nil then
+		a = g
+		g, b = r, r
+	end
+	-- Colour Conversion (0-1 -> 0-range)
+	r, g, b = r/range, g/range, b/range
+
+	-- If alpha not provided, set to 1 by default:
+	if a == nil then a = 1 end
+
+	-- Change Draw Colour:
+	love.graphics.setColor(r, g, b, a)
 end
 
 -- Distance Formula:
